@@ -1,6 +1,5 @@
 import { fetchCatByBreed } from './cat-api';
 import { catErrorMarkup, catInfoMarkup } from './templates';
-import { toastError } from './toaster';
 
 const elements = {
   container: document.querySelector('.cat-info'),
@@ -22,9 +21,8 @@ function renderCat(cat) {
     .then(data => {
       elements.container.innerHTML = catInfoMarkup(data);
     })
-    .catch(error => {
+    .catch(() => {
       elements.container.innerHTML = catErrorMarkup(cat.text);
-      toastError(error.message);
     })
     .finally(() => {
       elements.spinner.style.display = 'none';

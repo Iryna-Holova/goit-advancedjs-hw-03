@@ -1,7 +1,10 @@
+import SlimSelect from 'slim-select';
+import 'slim-select/styles';
 import { fetchBreeds } from './cat-api';
-import { common } from './common';
 import { toastError } from './toaster';
-import { activateSelect, setErrorSelect, setSelectedOption } from './select';
+import { renderCat } from './cat-renderer';
+
+const spinner = document.querySelector('.loader-spinner');
 
 /**
  * Load the list of cat breeds.
@@ -11,15 +14,25 @@ function loadBreeds() {
   fetchBreeds()
     .then(data => {
       const options = data.map(({ id, name }) => ({ text: name, value: id }));
-      activateSelect(options);
-      const userOption = localStorage.getItem(common.LS_KEY_OPTION);
-      if (userOption) {
-        setSelectedOption(userOption);
-      }
+
+      new SlimSelect({
+        select: '#select',
+        data: [
+          { placeholder: true, text: 'Select a cat breed...' },
+          ...options,
+        ],
+        events: {
+          afterChange: ([newVal]) => {
+            renderCat(newVal);
+          },
+        },
+      });
     })
-    .catch(error => {
-      setErrorSelect();
-      toastError(error.message);
+    .catch(() => {
+      toastError('Please try again later...');
+    })
+    .finally(() => {
+      spinner.style.display = 'none';
     });
 }
 

@@ -4,7 +4,10 @@ import { fetchBreeds } from './cat-api';
 import { toastError } from './toaster';
 import { renderCat } from './cat-renderer';
 
-const spinner = document.querySelector('.loader-spinner');
+const elements = {
+  spinner: document.querySelector('.loader-spinner'),
+  select: document.querySelector('.breed-select'),
+};
 
 /**
  * Load the list of cat breeds.
@@ -13,6 +16,7 @@ const spinner = document.querySelector('.loader-spinner');
 function loadBreeds() {
   fetchBreeds()
     .then(data => {
+      elements.select.style.display = 'flex';
       const options = data.map(({ id, name }) => ({ text: name, value: id }));
 
       new SlimSelect({
@@ -32,7 +36,7 @@ function loadBreeds() {
       toastError('Please try again later...');
     })
     .finally(() => {
-      spinner.style.display = 'none';
+      elements.spinner.style.display = 'none';
     });
 }
 
